@@ -1,0 +1,948 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Scala Level 1</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+					<h1>Scala for Spark</h1>
+					<h4>Scalator initiative</h4>
+					<p>
+						<small>Katrin Shechtman/<a target="_blank" href="http://twitter.com/katrinsh">@katrinsh</a></small>
+						<small>Sean Glover/<a target="_blank" href="http://twitter.com/randonom">@randonom</a></small>
+					</p>
+					<div><a target="_blank" href="http://www.meetup.com/scalator/"><img src="img/logo.jpeg" width="30%"></a></div>
+				</section>
+				
+				<section>
+					<h2>Why Scala ?</h2>
+					<ul>
+						<li>Type-safe</li>
+						<li>Immutable</li>
+						<li>Functional</li>
+						<li>Concise, expressive</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Dev Setup</h2>
+					<ul>
+						<li>SBT and project structure</li>
+						<li>Scala console</li>
+						<li>IDE: IntelliJ</li>
+						<li>Note: Exercises.scala. We will rename *.unsolved to be scala files</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Values and Variables</h2>
+						<pre><code data-trim data-noescape class="scala">
+	// constant (immutable) variables
+	scala> val alwaysTwo = 2
+	alwaysTwo: Int = 2
+
+	scala> alwaysTwo = 3
+	&lt;console>:8: error: reassignment to val
+	alwaysTwo = 3
+
+	// Mutable variables that can't be reassigned
+	scala> var canChange = 2
+	canChange: Int = 2
+
+	scala> canChange = 3
+	canChange: Int = 3
+						</code></pre>
+				</section>
+				<section>
+					<h2>Exercise</h2>
+					<p>Create value, variable, try to reassign both</p>
+				</section>
+				<section>
+					<h2>Use of semicolon</h2>
+					<pre><code data-trim data-noescape class="scala">
+	// you can use ;
+	scala> val num = 2;
+	num: Int = 2
+
+	// but you don't have to
+	scala> val num = 2
+	num: Int = 2
+
+	// unless you have multiple statements in one line
+	scala> val num = 2; val num2 = 4
+	num: Int = 2
+	num2: Int = 4
+					</code></pre>
+				</section>
+				<section>
+					<h2>Built-in Types</h2>
+					<pre><code data-trim data-noescape class="scala">
+	scala> val iAmInt = 2 // iAmInt: Int = 2
+	
+	scala> val iAmDouble = 2.0 // iAmDouble: Double = 2.0
+	
+	scala> val iAmLong = 2L // iAmLong: Long = 2
+	
+	scala> val iAmString = "aaa" // iAmString: String = aaa
+	
+	scala> val iAmBoolean = true // iAmBoolean: Boolean = true
+
+	// There is more ...
+					</code></pre>
+				</section>
+				<section>
+					<h2>Type inference</h2>
+					<pre><code data-trim data-noescape class="scala">
+	// explicitely state the type
+	scala> val num: Int = 2
+	num: Int = 2
+
+	// in this case compiler will force it	
+	scala> val num: Int = 2.0
+	&lt;console>:11: error: type mismatch;
+		found   : Double(2.0)
+		required: Int
+	
+	// let compiler deduct the type
+	scala> val num = 2.0
+	num: Double = 2.0
+					</code></pre>
+				</section>
+				<section>
+					<h2>Exercise</h2>
+					<p>Create float and char</p>
+				</section>
+				<section>
+					<h2>Type Parameters (generics)</h2>
+					<pre><code data-trim data-noescape class="scala">
+	scala> val list: List[Int] = List(1, 2, 3) // list of ints
+	list: List[Int] = List(1, 2, 3)
+
+	scala> val list = List(1, 2, 3) // type inference
+	list: List[Int] = List(1, 2, 3)
+
+	scala> val list: List[Any] = List(1, 2, 3) // casts if can
+	list: List[Any] = List(1, 2, 3)
+
+	// error in case if incompataible types
+	scala> val list: List[String] = List(1, 2, 3)
+	&lt;console>:11: error: type mismatch;
+		found   : Int(1)
+		required: String
+					</code></pre>
+				</section>
+				<section>
+					<h1>Object hierarchy</h1>
+					<img src="http://docs.scala-lang.org/resources/images/classhierarchy.img_assist_custom.png">
+				</section>
+				<section>
+					<h1>Types to pay attention to</h1>
+					<ul>
+						<li>Unit (similar to void)</li>
+						<li>AnyVal (super class of all value types)</li>
+						<li>AnyRef (corresponds to java.lang.Object)</li>
+						<li>Any (super class of both AnyVal and AnyRef)</li>
+						<li>Nothing (is never instantiated)</li>
+						<li>Null (and it's only value `null` - should be NEVER used in Scala)</li>
+
+					</ul>
+				</section>
+				<section>
+					<h2>Exercise 0</h2>
+					<h4>(in console)</h4>
+					<p>Create (1) Set of Ints, (2) List of Strings, (3) Seq of Ints and Strings</p>
+				</section>
+				<section>
+					<h1>Statement vs expression</h1>
+					<p>A statement is complete line of code that performs some action (and doesn't `return` any value). Expression is any section of the code that evaluates to a value (effectively `returning` it)</p>
+					<h4>In Scala everything is an expression</h4>
+				</section>
+				<section>
+					<h2>Expressions: if/else</h2>
+					<pre><code data-trim data-noescape class="scala">
+	// everything in Scala is expression
+	scala> val isIt = if(true) 1 else 2
+	isIt: Int = 1
+
+	// be careful though, in this case `else` will return Unit
+	scala> val isIt = if(true) 1
+	isIt: AnyVal = 1
+
+	scala> val isIt = if(false) 1
+	isIt: AnyVal = ()
+					</code></pre>
+				</section>
+				<section>
+					<h2>Basic Functions</h2>
+					<pre><code data-trim data-noescape class="scala">
+	// the most verbose
+	def sum(x: Int, y: Int): Int = {
+	  x + y
+	}
+
+	// the most succinct 
+	def sum(x: Int, y: Int) = x + y
+					</code></pre>
+				</section>
+				<section>
+					<h2>Functions of arity-0</h2>
+					<pre><code data-trim data-noescape class="scala">
+	// with parentheses
+	def generateId() = math.random
+
+	generateId()
+
+	generateId
+
+	// parentheses omitted
+	def generateId2 = math.random
+
+	// Error:(173, 12) Double does not take parameters
+	generateId2() 
+
+	generateId2
+					</code></pre>
+				</section>	
+				<section>
+					<h2>Parentheses: Best Practices</h2>
+					<ul>
+						<li>Omit parentheses in <u>function signature</u> only if function in question has no side-effects</li>
+						<li>Omit parentheses when <u>calling a function</u> only if this function has no side-effects</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Functions: return</h2>
+					<pre><code data-trim data-noescape class="scala">
+	// Scala way
+	def isPositive(num: Int) = {
+	  if(num > 0) true
+	  else false
+	}
+
+	// Java way	
+	def isPositive2(num: Int): Boolean = {
+	  if(num > 0) return true
+	  else return false
+	}
+					</code></pre>
+				</section>	
+				<section>
+					<h2>Dangerous/wrong use of return</h2>
+					<pre><code data-trim data-noescape class="scala">
+						
+	// Ugly Java way 
+	def isPositive3(num: Int): Boolean = {
+	  if(num > 0) return true
+	  false
+	}
+
+	// Wrong way!
+	def isPositive4(num: Int) = {
+	  if(num > 0) true
+	  false
+	}
+
+	isPositive4(2) // > res6: Boolean = false
+					</code></pre>
+				</section>	
+				<section>
+					<h2>Exercise 1</h2>
+					<h4>(in IDE)</h4>
+					<p>Implement a function that given a string returns <u>-1</u> if string is empty 
+					and <u>half its length</u> otherwise.</p>
+				</section>
+				<section>
+					<h2>Infix notation</h2>
+					<pre><code data-trim data-noescape class="scala">
+	scala> val list = List(1, 2, 3)
+	list: List[Int] = List(1, 2, 3)
+
+	// this line
+	scala> list.map(n => n + 10)
+	res12: List[Int] = List(11, 12, 13)
+
+	// is equavalent to
+	scala> list map (n => n + 10)
+	res13: List[Int] = List(11, 12, 13)
+					</code></pre>
+				</section>
+				<section>
+					<h2>Postfix notation</h2>
+					<pre><code data-trim data-noescape class="scala">
+	scala> val list = List(1, 2, 3)
+	list: List[Int] = List(1, 2, 3)
+
+	// this line
+	scala> list.sum
+	res19: Int = 6
+
+	// is equavalent to
+	scala> list sum
+	warning: there was one feature warning ...
+	res20: Int = 6
+
+	scala> list tail map ( x => x + 1)
+	// error: not found: value map
+					</code></pre>
+				</section>
+				<section>
+					<h2>Notations: Best practices</h2>
+					<p>http://docs.scala-lang.org/style/method-invocation.html</p>
+					<p>Just use the damn dots :)</p>
+				</section>
+				<section>
+					<h2>Import statement</h2>
+					<pre><code data-trim data-noescape class="scala">
+	// single Actor class
+	import akka.actor.Actor
+
+	// all members of scalikejdbc (scalikejdbc.* in Java)	
+	import scalikejdbc._
+
+	// multiple members
+	import akka.actor.{Actor, ActorLogging, Props}
+
+	// rename member to avoid collisions
+	import scalikejdbc.{DB => MySqlDB}
+					</code></pre>
+				</section>
+				<section>
+					<h2>Import: Best practices</h2>
+					<ul>
+						<li>Import statements can be anywhere in the code - use carefully</li>
+						<li>Don't ignore warnings like `imported ... is permanently hidden by definition of ... in package ...`</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Higher Order Functions</h2>
+					<p>Higher-order functions are functions that take other functions as parameters, 
+					or whose result is a function</p>
+				</section>
+				<section>
+					<h2>Basic Higher Order Functions</h2>
+					<pre><code data-trim data-noescape class="scala">
+	// higher order function	
+	def call(f: Int => Int, x: Int) = f(x)
+	// function
+	val addOneFunction = (x: Int) => x + 1
+
+	call (addOneFunction, 2) // > res8: Int = 3
+
+	call((x: Int) => x + 1, 2) // another variant
+
+	// Type Inference will find out types from call() signature
+	call(x => x + 1, 2)
+
+	// `_` is for an input parameter x 
+	call (_ + 1, 2)
+
+					</code></pre>
+					<h3></h3>
+				</section>
+				<section>
+					<h2>Exercise 2</h2>
+					<h4>(in IDE)</h4>
+					<p>Implement a function that gets one integer and two functions,
+					applies first function to the given integer, then second function to that and then returns the result.</p>
+				</section>
+				<section>
+					<h2>Exercise 3</h2>
+					<h4>(in IDE)</h4>
+					<ol>
+					<li>Implement a function that gets one integer and returns a function 
+					that gets one double and sums previous integer and double.</li>
+					<li>Implement a function that returns a function 
+					that gets a double and return the same double using previous function.</li>
+					</ol>
+				</section>
+				<section>
+					<h2>More about Higher Order Functions</h2>
+					<p>http://docs.scala-lang.org/tutorials/tour/anonymous-function-syntax.html</p>
+				</section>
+				<section>
+					<h2>Option</h2>
+					<p>Represents optional values. Instances of Option are either an instance of scala.Some 
+					or the object None</p>
+					<h3>In Scala always use Option instead of null</h3>
+				</section>
+				<section>
+					<h2>Option: Some</h2>
+					<pre><code data-trim data-noescape class="scala">
+	// non-empty option is Some(...)
+	val maybeName = Some(" John ")
+	// > maybeName: Some[String] = Some( John )
+
+	// map() will be executed only if option is not empty
+	maybeName.map(name => name.trim)
+	// > Option[String] = Some(John)
+
+	// we can map() multiple times
+	maybeName.map(_.trim).filter(_.nonEmpty).map(_.size)
+	// > Option[Int] = Some(4)
+					</code></pre>
+				</section>
+				<section>
+					<h2>Option: None</h2>
+					<pre><code data-trim data-noescape class="scala">
+	// one way to define empty option
+	scala> val maybeName: Option[String] = None
+	// maybeName: Option[String] = None
+
+	// BETTER way to define empty option
+	scala> val maybeName = Option.empty[String]
+	// maybeName3: Option[String] = None
+
+	// Wrong way to define empty option
+	scala> val maybeName = None
+	// maybeName: None.type = None
+
+	// if we map() over None, we will get None
+	scala> maybeName.map(_.trim).filter(_.nonEmpty).map(_.size)
+	// res68: Option[Int] = None
+					</code></pre>
+				</section>
+
+				<section>
+					<h2>Options and nulls</h2>
+					<pre><code data-trim data-noescape class="scala">
+	scala> Some(null)
+	res0: Some[Null] = Some(null)
+
+	scala> Option(null)
+	res1: Option[Null] = None
+					</code></pre>
+					<h4>Use Option(x) to wrap possible nulls</h4>
+				</section>
+				<section>
+					<h2>Option: Flatmap</h2>
+					<pre><code data-trim data-noescape class="scala">
+	scala> val maybe = Some("Kuku")
+	// maybe: Some[String] = Some(Kuku)
+
+	// String in Scala also has headOption method
+	// so if we call map(), we get nested Options
+	scala> maybe.map(_.headOption)
+	// res85: Option[Option[Char]] = Some(Some(K))
+
+	// one way to get rid of nested Options is
+	scala> maybe.map(_.headOption).flatten
+	// res86: Option[Char] = Some(K)
+
+	// Better way is to use flatMap()
+	scala> maybe.flatMap(_.headOption)
+	// res87: Option[Char] = Some(K)
+					</code></pre>
+				</section>
+				<section>
+					<h2>Option: Frequently used methods</h2>
+					<ul>
+						<li>map</li>
+						<li>getOrElse (don't use get!)</li>
+						<li>headOption (don't use head!)</li>
+						<li>lastOption (don't use last!)</li>
+						<li>flatMap</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Exercise 4</h2>
+					<h4>(in IDE)</h4>
+					<p>Implement a function that gets an optional integer and returns its 
+					optional value doubled.</p>
+				</section>
+				<section>
+					<h2>Try</h2>
+					<p>The Try type represents a computation that may either result in an exception, 
+					or return a successfully computed value</p>
+				</section>
+				<section>
+					<h2>Try: Example</h2>
+					<pre><code data-trim data-noescape class="scala">
+	scala> val firstTry = Try(5 / 2)
+	// firstTry: scala.util.Try[Int] = Success(2)
+
+	scala> val secondTry = Try(5 / 0)
+	// secondTry: scala.util.Try[Int] = 
+	// Failure(java.lang.ArithmeticException: / by zero)
+
+	scala> firstTry.map(_ + 1)
+	// res98: scala.util.Try[Int] = Success(3)
+
+	scala> secondTry.map(_ + 1)
+	// res99: scala.util.Try[Int] = 
+	// Failure(java.lang.ArithmeticException: / by zero)
+					</code></pre>
+				</section>
+				<section>
+					<h2>Try: Frequently used methods</h2>
+					<ul>
+						<li>map</li>
+						<li>getOrElse (don't use `get`!)</li>
+						<li>isSuccess</li>
+						<li>isFailure</li>
+						<li>recover and recoverWith (more about it later when we will learn partial functions)</li>
+						<li>flatMap</li>
+						<li>Can be pattern matched (more details soon)</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Try: Flatmap</h2>
+					<pre><code data-trim data-noescape class="scala">
+	scala> firstTry.flatMap(_ => secondTry)
+	// res109: scala.util.Try[Int] = 
+	// Failure(java.lang.ArithmeticException: / by zero)
+
+	scala> secondTry.flatMap(_ => firstTry)
+	// res110: scala.util.Try[Int] = 
+	// Failure(java.lang.ArithmeticException: / by zero)
+					</code></pre>
+				</section>
+				<section>
+				<h2>Exercise 5</h2>
+				<h4>(questions)</h4>
+				<pre><code data-trim data-noescape class="scala">
+  def divide (x: Int, y: Int) = {
+    try { 
+      x / y
+    } catch { 
+      case ex: Throwable => "Hmm ..." 
+    }
+  }
+				</code></pre>
+				<ol>
+					<li>What does `divide(2, 4)` return?</li>
+					<li>What does `divide(1, 0)` return?</li>
+					<li>What is return type of `divide`?</li>
+					<li>What's the difference between try/catch and Try?</li>
+				</ol>
+				</section>
+				
+				<section>
+					<h2>Tuple</h2>
+					<h3>In Scala there is Tuple1 to Tuple22 classes. They represent containers with the specific number of elements of same or different types.</h3>
+					<h3></h3>
+				</section>
+				<section>
+					<h2>Tuple2: Example</h2>
+					<pre><code data-trim data-noescape class="scala">
+	scala> val tuple = Tuple2(2, 3)
+	// tuple: (Int, Int) = (2,3)
+
+	scala> tuple._1
+	// res6: Int = 2
+
+	scala> tuple._2
+	// res7: Int = 3
+					</code></pre>
+				</section>
+				<section>
+					<h2>Exercise 6</h2>
+					<h4>(trivia)</h4>
+					<p>In how many different ways one can create a tuple in Scala?</p>
+				</section>
+				
+				<section>
+				<h2>Classes, Objects and Case Classes</h2>
+				</section>
+				
+				<section>
+					<h2>Classes</h2>
+					<ul>
+						<li>Classes in Scala are static templates that can be instantiated 
+						into many objects at runtime using `new` keyword</li>
+						<li><b>The body of the class is its primary constructor</b></li>
+						<li>Let's take a look at `MyJob.scala`</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Objects</h2>
+					<ul>
+						<li>Objects are singletons in Scala</li>
+						<li>Let's take a look at `Utils.scala`</li>
+						<li>Object residing in <u>same file</u> is called <i>companion object</i></li>
+					</ul>
+				</section>
+				<section>
+					<h2>Packages and scopes</h2>
+					<h4>public, private, protected, private[this] etc</h4>
+					<p>More info: http://alvinalexander.com/scala/how-to-control-scala-method-scope-object-private-package</p>
+				</section>
+				<section>
+					<h2>Case Classes</h2>
+					<h3>Immutable data containers</h3>
+					<ol>
+						<li>No need in `new` when creating new instances</li>
+						<li>Has concise versions of `==` and `toString`</li>
+						<li>Has a convenient copy method</li>
+					</ol>
+				</section>
+				<section>
+					<h2>Case Class: Example</h2>
+					<pre><code data-trim data-noescape class="scala">
+	case class Apple(color: String, r: Double) {
+	  // throws IllegalArgumentException id condition is not met
+	  require(r > 0, "Radius had to be positive") 
+	  val surface = math.Pi * math.pow(r, 2)
+	}
+
+	val apple = Apple("Green", 1.5) 
+	// > apple: Apple = Apple(Green,1.5)
+	val biggerApple = apple.copy(r = 2) 
+	// > biggerApple: Apple = Apple(Green,2.0)
+	val sameApple = Apple("Green", 1.5)
+
+	apple == sameApple // > res0: Boolean = true
+	biggerApple == sameApple // > res1: Boolean = false
+					</code></pre>
+				</section>
+				<section>
+					<h2>Exercise 7</h2>
+					<h4>(console)</h4>
+					<ol>
+						<li>Create a class orange with weight and origin.</li>
+						<li>Instantiate two oranges with same characteristics.</li>
+						<li>Compare them. What do you get?</li>
+						<li>Copy the first orange but change its weight.</li>
+						<li>Compare the original orange with its modified copy. What do you get?</li>
+					</ol>
+				</section>
+				
+				<section>
+					<h2>Pattern matching</h2>
+					<p>A built-in general pattern matching mechanism allowing to match on any 
+					sort of data with a first-match policy. Can pattern match all sorts of data 
+					such Option, Try, Tuples, Case Classes, Regex on String etc</p>
+				</section>
+				<section>
+					<h2>Pattern matching: Example 1</h2>
+					<pre><code data-trim data-noescape class="scala">
+	def howMany(x: Int): String = x match {
+	  case 1 => "single"
+	  case x if x > 0 => "plural"
+	  case _ => "negative"
+	}
+
+	howMany(-1) // > res5: String = non-positive
+	howMany(0) // > res5: String = non-positive
+	howMany(1) // > res5: String = single
+	howMany(10) // > res5: String = plural
+					</code></pre>
+					<p>If your match is not complete and it's given with unmatched value, 
+					it will throw `MatchError` exception. Always `use case _` as last match</p>
+				</section>
+				<section>
+					<h2>Pattern matching: Example 2</h2>
+					<pre><code data-trim data-noescape class="scala">
+	val myApple = Apple("black", 1)
+	
+	def kindOf(a: Any): String = a match {
+	  case `myApple` => "It is my apple!"
+	  case Apple(c, _) if c == "Green" => "green apple"
+	  case apple: Apple if apple.surface > 5 => "big apple"
+	  case a@Apple(_, r) => "just apple" + a + ", r=" + r
+	  // case a@Apple => "just apple: " + a // works too
+	  case Some(a: Apple) => "some " + a
+	  case something => "Hmmm: " + something
+	}
+
+	kindOf(Some(Apple("bl", 3))) // > String = some Apple(bl,3.0)
+					</code></pre>
+				</section>
+				<section>
+					<h2>Exercise 8</h2>
+					<h4>(ide)</h4>
+					<p>Implement a function that gets `Any` and pattern matches on tuple 
+					returning string containing the tuple's members, some other string otherwise</p>
+				</section>
+				<section>
+					<h2>There's so much more to Scala OO</h2>
+					<p>Subclassing, traits, uniform access principle, multiple inheritance, 
+					diamond problem or lack thereof, etc etc</p>
+					<h4>Left as an exercise for the reader</h4>
+				</section>
+				
+				<section>
+					<h2>Collections overview</h2>
+					<ul>
+						<li>Collections: Seq, List, Set, Range, Map etc</li>
+						<li>Hierarchy: http://docs.scala-lang.org/overviews/collections/overview.html</li>
+						<li>Ops: Seq (+:, :+) / List (::, :::), Traversable (++), Nil</li>
+						<li>Mutable collections: no sense to use them in Spark</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Exercise 9</h2>
+					<h4>(console)</h4>
+					<p>Implement a function</p>
+					<pre><code data-trim data-noescape class="scala">
+def mapMe(seq: Seq[(String, Int)]): String
+					</code></pre>
+					<p>returning a string containing the tuple's members (similar to previous exercise)</p>
+				</section>
+				<section>
+				<h2>Answer to exercise no. 9</h2>
+				<pre><code data-trim data-noescape class="scala">
+def mapMe(seq: Seq[(String, Int)]) = seq.map(x => matchMe(x))
+def mapMe2(seq: Seq[(String, Int)]) = seq.map(matchMe(_))
+def mapMe3(seq: Seq[(String, Int)]) = seq.map(matchMe)
+def mapMe4(seq: Seq[(String, Int)]) = 
+	seq.map(x => s"${x._1} and ${x._2}")
+def mapMe5(seq: Seq[(String, Int)]) = 
+	seq.map { case (x, y) => s"$x and $y" }
+  				</code></pre>
+  				</section>
+				<section>
+					<h2>Collections operations</h2>
+					<ul>
+						<li>map vs foreach</li>
+						<li>take</li>
+						<li>forall vs exists</li>
+						<li>find, filter and filterNot</li>
+						<li>fold, foldLeft, foldRight</li>
+						<li>reduce, reduceLeft, reduceRight</li>
+						<li>zip, zipWithIndex, groupBy etc</li>
+					</ul>
+				</section>	
+				<section>
+					<h2>Exercise 10</h2>
+					<h4>(ide)</h4>
+					<p>Call as many collection APIs as you can on collection of you choice in 5 minutes</p>
+					<div><img src="img/countdown-menu.png" width="30%"></div>
+				</section>
+				<section>
+					<h2>Partial Functions</h2>
+					<p>A partial function is a function that does not provide an answer for every 
+					possible input value it can be given. It provides an answer only for a subset of 
+					possible data, and defines the data it can handle. In Scala, a partial function 
+					can also be queried to determine if it can handle a specific value.</p>
+				</section>
+				<section>
+					<h2>Partial Functions: Example</h2>
+					<pre><code data-trim data-noescape class="scala">
+	val freshBanana: PartialFunction[Banana, String] = {
+  	  case _:GreenBanana => "Wait"
+  	  case _:YellowBanana => "Eat"
+	}
+
+	val bananas = List(
+	  GreenBanana(1), 
+	  YellowBanana(2), 
+	  RottenBanana)
+  
+	bananas.collect(freshBanana)
+	// > res0: List[String] = List(Wait, Eat)
+					</code></pre>
+				</section>
+				<section>
+					<h2>Partial Functions: using anonymous function</h2>
+					<pre><code data-trim data-noescape class="scala">
+	val bananas = List(
+	  GreenBanana(1), 
+	  YellowBanana(2), 
+	  RottenBanana)
+
+	bananas.collect {
+      case _:GreenBanana => "Wait"
+      case _:YellowBanana => "Eat"
+	} // > res0: List[String] = List(Wait, Eat)
+					</code></pre>
+					<p>What will happen if we exchange collect() with map() here?</p>
+				</section>
+				<section>
+					<h2>Partial Functions: Chaining</h2>
+					<p>f orElse f2 orElse f3 ...</p>
+					<pre><code data-trim data-noescape class="scala">
+	val freshBanana: PartialFunction[Banana, String] = {
+	  case _:GreenBanana => "Wait"
+	  case _:YellowBanana => "Eat"
+	}
+
+	val rottenBanana: PartialFunction[Banana, String] = {
+	  case RottenBanana => "Throw"
+	}
+
+	val bananas = List(GreenBanana(1), YellowBanana(2), 
+	  RottenBanana)
+
+	bananas.map(freshBanana orElse rottenBanana) 
+	// > res1: List[String] = List(Wait, Eat, Throw)
+
+					</code></pre>
+				</section>
+				<section>
+					<h2>Partial functions: notes</h2>
+					<ul>
+						<li>In most case anonymous functions are used</li>
+						<li>Every partial function has isDefinedAt() method</li>
+						<li>For more info: http://www.scala-lang.org/api/2.11.8/index.html#scala.PartialFunction</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Implicits</h2>
+					<ul>
+						<li>Implicits in Scala refers to either a value that can be passed “automatically”, so to speak, or a conversion from one type to another that is made automatically</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Implicit parameters</h2>
+					<ul>
+						<li>A method with implicit parameters can be applied to arguments just like a normal method. In this case the implicit label has no effect. However, if such a method misses arguments for its implicit parameters, such arguments will be automatically provided</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Implicit conversions</h2>
+					<ul>
+						<li>If one calls a method `m` on an object `o` of a class C, and that class does not support method `m`, then Scala will look for an implicit conversion from C to something that does support `m`</li>
+					</ul>
+				</section>
+				<section>
+					<h2>Implicit parameters - Example</h2>
+					<pre><code data-trim data-noescape class="scala">
+	case class Food(kindOf: String)
+
+	class Animal {
+	  def eat(food: Food) = "Just ate " + food.kindOf
+	}
+
+	// multiple parameter list is allowed in Scala
+	def feed(animal: Animal)(implicit food: Food) = {
+	  animal.eat(food)
+	}
+					</code></pre>
+				</section>
+				<section>
+					<h2>Implicit parameters - Compilation fails</h2>
+					<pre><code data-trim data-noescape class="scala">
+val animal = new Animal
+
+feed(animal)
+
+// Error:(15, 6) could not find implicit 
+// value for parameter food: 
+// A$A70.this.Food feed(animal);}
+					</code></pre>
+				</section>
+				<section>
+					<h2>Implicit parameters - Compilation fails</h2>
+					<pre><code data-trim data-noescape class="scala">
+val food = Food("Yummy")
+
+val animal = new Animal
+
+feed(animal)
+
+// Error:(17, 6) could not find implicit 
+// value for parameter food: 
+// A$A71.this.Food feed(animal);}
+					</code></pre>
+				</section>
+				<section>
+					<h2>Implicit parameters - Compilation succeeds</h2>
+					<pre><code data-trim data-noescape class="scala">
+implicit val food = Food("Yummy")
+
+val animal = new Animal
+
+feed(animal) // > res0: String = Just ate Yummy
+					</code></pre>
+				</section>
+				<section>
+					<h2>Implicit parameters - Compilation fails (again)</h2>
+					<pre><code data-trim data-noescape class="scala">
+implicit val food = Food("Yummy")
+
+implicit val food2 = Food("Tummy")
+
+val animal = new Animal
+
+feed(animal)
+
+// Error:(18, 6) ambiguous implicit values:
+// both value food2 in class A$A73 of type => A$A73.this.Food
+// and value food in class A$A73 of type => A$A73.this.Food
+// match expected type A$A73.this.Food
+// feed(animal);}
+					</code></pre>
+				</section>
+				<section>
+					<h2>Implicit parameters - Explicit call</h2>
+					<pre><code data-trim data-noescape class="scala">
+implicit val food = Food("Yummy")
+
+implicit val food2 = Food("Tummy")
+
+val animal = new Animal
+
+feed(animal)(food) 
+
+// works whether food is implicit or not, or wether there is 
+// more than one variable of the same type in scope or not
+
+					</code></pre>
+					<h4>Don't abuse implicit paramerters in signatures of your methods!</h4>
+				</section>
+				<section>
+					<h2>Implicit conversions: Example</h2>
+						<pre><code data-trim data-noescape class="scala">
+  import scala.concurrent.duration._
+
+  val timeout = Timeout(2 seconds)
+
+  // package object duration: line 43
+  // implicit final class DurationInt(private val n: Int) 
+  //   extends AnyVal with DurationConversions {
+  //     override protected def durationIn(unit: TimeUnit): 
+  // 		FiniteDuration = Duration(n.toLong, unit)
+  // }
+					</code></pre>
+					<h3>DON'T IMPLEMENT YOUR OWN UNLESS IT IS ABSOLUTELY NECESSARY !</h3>
+				</section>
+				
+				
+				<section>
+					<h1>Thank you</h1>
+					<p>
+						<small>Katrin Shechtman/<a target="_blank" href="http://twitter.com/katrinsh">@katrinsh</a></small>
+						<small>Sean Glover/<a target="_blank" href="http://twitter.com/randonom">@randonom</a></small>
+					</p>
+					<div><a target="_blank" href="http://www.meetup.com/scalator/"><img src="img/logo.jpeg" width="30%"></a></div>
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+				slideNumber: true,	
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
