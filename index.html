@@ -166,7 +166,7 @@
 					</ul>
 				</section>
 				<section>
-					<h2>Exercise 0</h2>
+					<h2>Exercise</h2>
 					<h4>(in console)</h4>
 					<p>Create (1) Set of Ints, (2) List of Strings, (3) Seq of Ints and Strings</p>
 				</section>
@@ -189,6 +189,7 @@
 	scala> val isIt = if(false) 1
 	isIt: AnyVal = ()
 					</code></pre>
+					<h4>Easy fix: always have `else`</h4>
 				</section>
 				<section>
 					<h2>Basic Functions</h2>
@@ -355,7 +356,6 @@
 	call (_ + 1, 2)
 
 					</code></pre>
-					<h3></h3>
 				</section>
 				<section>
 					<h2>Exercise 2</h2>
@@ -373,6 +373,28 @@
 					that gets a double and return the same double using previous function.</li>
 					</ol>
 				</section>
+				
+				<section>
+					<h2>Closures</h2>
+					<pre><code data-trim data-noescape class="scala">
+scala> var hello = "Hello"
+// hello: String = Hello
+
+scala> def sayHello(nm: String) { println(s"$hello, $nm") }
+// sayHello: (nm: String)Unit
+
+scala> def exec(f:(String) => Unit, nm: String) { f(nm) }
+// exec: (f: String => Unit, nm: String)Unit
+
+scala> exec(sayHello, "Al") // Hello, Al
+
+scala> hello = "Hola" // hello: String = Hola
+
+scala> exec(sayHello, "Lorenzo") // Hola, Lorenzo
+
+					</code></pre>
+				</section>
+				
 				<section>
 					<h2>More about Higher Order Functions</h2>
 					<p>http://docs.scala-lang.org/tutorials/tour/anonymous-function-syntax.html</p>
@@ -381,7 +403,7 @@
 					<h2>Option</h2>
 					<p>Represents optional values. Instances of Option are either an instance of scala.Some 
 					or the object None</p>
-					<h3>In Scala always use Option instead of null</h3>
+					<h4>In Scala always use Option instead of null</h4>
 				</section>
 				<section>
 					<h2>Option: Some</h2>
@@ -497,9 +519,8 @@
 						<li>getOrElse (don't use `get`!)</li>
 						<li>isSuccess</li>
 						<li>isFailure</li>
-						<li>recover and recoverWith (more about it later when we will learn partial functions)</li>
+						<li>recover and recoverWith (using partial functions)</li>
 						<li>flatMap</li>
-						<li>Can be pattern matched (more details soon)</li>
 					</ul>
 				</section>
 				<section>
@@ -555,7 +576,7 @@
 				<section>
 					<h2>Exercise 6</h2>
 					<h4>(trivia)</h4>
-					<p>In how many different ways one can create a tuple in Scala?</p>
+					<p>In how many different ways one can create a tuple2 in Scala?</p>
 				</section>
 				
 				<section>
@@ -597,7 +618,7 @@
 					<h2>Case Class: Example</h2>
 					<pre><code data-trim data-noescape class="scala">
 	case class Apple(color: String, r: Double) {
-	  // throws IllegalArgumentException id condition is not met
+	  // throws IllegalArgumentException if condition is not met
 	  require(r > 0, "Radius had to be positive") 
 	  val surface = math.Pi * math.pow(r, 2)
 	}
@@ -668,7 +689,7 @@
 				<section>
 					<h2>Exercise 8</h2>
 					<h4>(ide)</h4>
-					<p>Implement a function that gets `Any` and pattern matches on tuple 
+					<p>Implement a function that gets `Any` and pattern matches on tuple2 
 					returning string containing the tuple's members, some other string otherwise</p>
 				</section>
 				<section>
@@ -692,7 +713,7 @@
 					<h4>(console)</h4>
 					<p>Implement a function</p>
 					<pre><code data-trim data-noescape class="scala">
-def mapMe(seq: Seq[(String, Int)]): String
+def mapMe(seq: Seq[(String, Int)]): Seq[String]
 					</code></pre>
 					<p>returning a string containing the tuple's members (similar to previous exercise)</p>
 				</section>
@@ -712,6 +733,7 @@ def mapMe5(seq: Seq[(String, Int)]) =
 					<h2>Collections operations</h2>
 					<ul>
 						<li>map vs foreach</li>
+						<li>flatMap</li>
 						<li>take</li>
 						<li>forall vs exists</li>
 						<li>find, filter and filterNot</li>
